@@ -2,8 +2,8 @@ import logging
 
 from azure.functions import TimerRequest
 from datetime import datetime, timezone
-from app_settings import *
-from data_gathering_funcs import *
+from .app_settings import *
+from .data_gathering_funcs import *
 
 
 blob_service_client = BlobServiceClient.from_connection_string(CONTAINER_CONNECT_STRING)

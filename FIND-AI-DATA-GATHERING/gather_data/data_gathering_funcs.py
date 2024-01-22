@@ -5,7 +5,7 @@ from pytz import timezone
 import re
 from html2text import html2text
 from azure.storage.blob import BlobServiceClient, BlobClient
-from app_settings import *
+from .app_settings import *
 
 blob_service_client = BlobServiceClient.from_connection_string(CONTAINER_CONNECT_STRING)
 
