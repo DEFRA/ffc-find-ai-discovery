@@ -9,6 +9,8 @@ from .app_settings import *
 
 blob_service_client = BlobServiceClient.from_connection_string(CONTAINER_CONNECT_STRING)
 
+#0 0 0 1,15 * * CRON EXPRESSION
+
 base_url = 'https://www.gov.uk/countryside-stewardship-grants'
 cs_overview_url = 'https://www.gov.uk/guidance/countryside-stewardship-get-funding-to-protect-and-improve-the-land-you-manage'
 site_visits_url = 'https://www.gov.uk/guidance/site-visits-countryside-stewardship-and-environmental-stewardship'
