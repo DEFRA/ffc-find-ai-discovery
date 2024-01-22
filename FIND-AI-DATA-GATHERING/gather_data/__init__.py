@@ -33,5 +33,7 @@ def main(mytimer: TimerRequest) -> None:
                 blob_client.upload_blob(webpage_data, overwrite = True)
             else:
                 print ("\n"+ str(doc_title) + ' is already up-to-date.')
+    else:
+        logging.info('Code did not run as timer is not past due')
 
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
