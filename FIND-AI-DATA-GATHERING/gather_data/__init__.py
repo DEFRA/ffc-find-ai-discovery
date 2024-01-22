@@ -11,7 +11,7 @@ from azure.storage.blob import BlobServiceClient
 blob_service_client = BlobServiceClient.from_connection_string(CONTAINER_CONNECT_STRING)
 
 def main(mytimer: TimerRequest) -> None:
-    utc_timestamp = datetime.utcnow().replace(tzinfo=timezone.utc).isoformat()
+    utc_timestamp = datetime.utcnow().replace(tzinfo=timezone('UTC')).isoformat()
     
     
     
