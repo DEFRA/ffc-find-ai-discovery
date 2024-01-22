@@ -4,6 +4,8 @@ from azure.functions import TimerRequest
 from datetime import datetime, timezone
 from .app_settings import *
 from .data_gathering_funcs import *
+from azure.storage.blob import BlobServiceClient
+
 
 
 blob_service_client = BlobServiceClient.from_connection_string(CONTAINER_CONNECT_STRING)
