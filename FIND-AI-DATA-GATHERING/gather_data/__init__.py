@@ -29,12 +29,11 @@ def main(mytimer: TimerRequest) -> None:
             
             blob_client = blob_service_client.get_blob_client(container = CONTAINER_NAME_STRING,
                                                                 blob = webpage_file_name)
-  
-            blob_client.set_blob_metadata({"webpage_url": str(link)})
             
             logging.info("\nUploading to Azure Storage as blob:\n\t" + webpage_file_name)
             
             blob_client.upload_blob(webpage_data, overwrite = True)
+            blob_client.set_blob_metadata({"webpage_url": str(link)})
         else:
             logging.info("\n"+ str(doc_title) + ' is already up-to-date.')
     
