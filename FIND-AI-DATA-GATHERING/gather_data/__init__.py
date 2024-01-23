@@ -4,7 +4,7 @@ from azure.functions import TimerRequest
 from datetime import datetime, timezone
 from .app_settings import *
 from .data_gathering_funcs import *
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient, ContainerClient
 
 
 
@@ -29,6 +29,8 @@ def main(mytimer: TimerRequest) -> None:
             
             blob_client = blob_service_client.get_blob_client(container = CONTAINER_NAME_STRING,
                                                                 blob = webpage_file_name)
+  
+            blob_client.set_blob_metadata({"webpage_url": str(link)})
             
             logging.info("\nUploading to Azure Storage as blob:\n\t" + webpage_file_name)
             
