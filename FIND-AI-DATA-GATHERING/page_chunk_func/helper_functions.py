@@ -93,7 +93,7 @@ def split_content_by_headings(doc_title: str, markdown_content: str) -> list[tup
   sections = re.split(pattern, markdown_content)
   
   
-  url = sections[0]
+  url = sections[0].strip().replace('\n', '')
   sections = sections[1:]
   # Combine each heading with its corresponding text
   combined_sections = []
