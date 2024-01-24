@@ -22,11 +22,15 @@ def main(myblob: InputStream):
             
             blob_title = blob_name.replace(".txt", "")
             
+            blob_title = blob_title.encode('utf-8')
+            
             section_file_name = chunk[0].split(' -- ')[1]
             section_title = section_file_name.replace('.txt', '') 
         
             blob_client.upload_blob(chunk[1], overwrite = True)
-            blob_client.set_blob_metadata({'webpage_url': blob_url, 'doc_title': blob_title, 'section': section_title})
+            blob_client.set_blob_metadata({'webpage_url': str(blob_url),
+                                           'doc_title': str(blob_title),
+                                           'section': str(section_title)})
         else:
             logging.info("\n"+ str(chunk[0]) + ' is already up-to-date.')
         

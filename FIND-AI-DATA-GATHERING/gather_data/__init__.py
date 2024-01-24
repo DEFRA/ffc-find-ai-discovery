@@ -32,6 +32,8 @@ def main(mytimer: TimerRequest) -> None:
             
             logging.info("\nUploading to Azure Storage as blob:\n\t" + webpage_file_name)
             
+            doc_title = doc_title.encode('utf-8')
+            
             blob_client.upload_blob(webpage_data, overwrite = True)
             blob_client.set_blob_metadata({"webpage_url": str(link), "doc_title": str(doc_title)})
         else:
