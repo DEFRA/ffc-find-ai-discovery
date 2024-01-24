@@ -20,24 +20,28 @@ def main(mytimer: TimerRequest) -> None:
         
     all_links = get_all_links_from_reference(base_url)
     for link in all_links:
-        doc_title, webpage_content = create_documents_from_webpage(link)
-        
-        if check_data_freshness(webpage_content, doc_title):
-            webpage_data = str(link) + "\n" + webpage_content
-            webpage_data = webpage_data.encode('utf-8')
-            webpage_file_name = str(doc_title) + ".txt"
+        try:
             
-            blob_client = blob_service_client.get_blob_client(container = CONTAINER_NAME_STRING,
-                                                                blob = webpage_file_name)
+            doc_title, webpage_content = create_documents_from_webpage(link)
             
-            logging.info("\nUploading to Azure Storage as blob:\n\t" + webpage_file_name)
-            
-            doc_title = doc_title.encode('utf-8')
-            
-            blob_client.upload_blob(webpage_data, overwrite = True)
-            blob_client.set_blob_metadata({"webpage_url": str(link), "doc_title": str(doc_title)})
-        else:
-            logging.info("\n"+ str(doc_title) + ' is already up-to-date.')
+            if check_data_freshness(webpage_content, doc_title):
+                webpage_data = str(link) + "\n" + webpage_content
+                webpage_data = webpage_data.encode('utf-8')
+                webpage_file_name = str(doc_title) + ".txt"
+                
+                blob_client = blob_service_client.get_blob_client(container = CONTAINER_NAME_STRING,
+                                                                    blob = webpage_file_name)
+                
+                logging.info("\nUploading to Azure Storage as blob:\n\t" + webpage_file_name)
+                
+                doc_title = doc_title.encode('utf-8')
+                
+                blob_client.upload_blob(webpage_data, overwrite = True)
+                blob_client.set_blob_metadata({"webpage_url": str(link), "doc_title": str(doc_title)})
+            else:
+                logging.info("\n"+ str(doc_title) + ' is already up-to-date.')
+        except:
+            logging.info(f"WARNING: FAILED TO PROCESS WEBPAGE: {doc_title}")
     
 
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
