@@ -1,0 +1,12 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "myblob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "%FIND_CONTAINER_MONITOR_PATH%",
+      "connection": "GATHER_CONTAINER_CONNECTION_STRING"
+    }
+  ]
+}
