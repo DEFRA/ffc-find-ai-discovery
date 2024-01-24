@@ -85,7 +85,7 @@ def check_data_freshness (scraped_data: str, title: str) -> bool:
     return scraped_datetime > blob_last_modified_date
 
 
-def split_content_by_headings(doc_title: str, markdown_content: str) -> list:
+def split_content_by_headings(doc_title: str, markdown_content: str) -> list[tuple[str, str]]:
   # Define the regular expression pattern to match H1 and H2 headings
   pattern = r'((?<!#)#{1,2}(?!#).*)'
 

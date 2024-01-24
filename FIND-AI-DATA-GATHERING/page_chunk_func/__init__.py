@@ -19,9 +19,14 @@ def main(myblob: InputStream):
                                                                 blob = chunk[0])
             
             logging.info("\nUploading Chunk to Azure Storage as blob:\n\t" + chunk[0])
+            
+            blob_title = blob_name.replace(".txt", "")
+            
+            section_file_name = chunk[0].split(' -- ')[1]
+            section_title = section_file_name.replace('.txt', '') 
         
             blob_client.upload_blob(chunk[1], overwrite = True)
-            blob_client.set_blob_metadata({'webpage_url': blob_url})
+            blob_client.set_blob_metadata({'webpage_url': blob_url, 'doc_title': blob_title, 'section': section_title})
         else:
             logging.info("\n"+ str(chunk[0]) + ' is already up-to-date.')
         
