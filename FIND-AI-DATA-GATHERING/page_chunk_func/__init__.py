@@ -35,8 +35,9 @@ def main(myblob: InputStream):
                                             'section': str(section_title)})
             else:
                 logging.info("\n"+ str(chunk[0]) + ' is already up-to-date.')
-    except:
-        logging.info(f"WARNING: FAILED TO CHUNK WEBPAGE: {blob_name}")
+    except Exception as error:
+        logging.warning(f"WARNING: FAILED TO CHUNK WEBPAGE: {blob_name}")
+        logging.exception(error)
         
 
     

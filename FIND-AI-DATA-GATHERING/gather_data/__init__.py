@@ -40,8 +40,9 @@ def main(mytimer: TimerRequest) -> None:
                 blob_client.set_blob_metadata({"webpage_url": str(link), "doc_title": str(doc_title)})
             else:
                 logging.info("\n"+ str(doc_title) + ' is already up-to-date.')
-        except:
-            logging.info(f"WARNING: FAILED TO PROCESS WEBPAGE: {doc_title}")
+        except Exception as error:
+            logging.warning(f"WARNING: FAILED TO PROCESS WEBPAGE: {doc_title}")
+            logging.exception(error)
     
 
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
