@@ -22,9 +22,8 @@ def main(myblob: InputStream):
                 
                 logging.info("\nUploading Chunk to Azure Storage as blob:\n\t" + chunk[0])
                 
-                blob_prefix = f"b'{INPUT_CONTAINER_NAME}/"
                 blob_title = blob_name.replace(".txt'", "")
-                blob_title = blob_title.replace(blob_prefix, "")
+                blob_title = blob_title.replace((INPUT_CONTAINER_NAME + "/"), "")
                 
                 
                 blob_title = blob_title.encode('utf-8')
