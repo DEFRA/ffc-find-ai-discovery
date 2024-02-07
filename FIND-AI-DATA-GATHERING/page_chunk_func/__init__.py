@@ -1,4 +1,5 @@
 import logging
+import json
 
 from azure.functions import InputStream
 from .app_settings import *
@@ -15,10 +16,14 @@ def main(myblob: InputStream):
     try:
         
         blob_chunked_tups, blob_url = split_content_by_headings(blob_name, blob_content)
+        chunk_num = 0
         for chunk in blob_chunked_tups:
             if check_data_freshness(chunk[1], chunk[0]):
+                
+                blob_out_name = chunk[0].replace(".txt", ".json")
+
                 blob_client = blob_service_client.get_blob_client(container = OUTPUT_CONTAINER_NAME,
-                                                                    blob = chunk[0])
+                                                                    blob = blob_out_name)
                 
                 logging.info("\nUploading Chunk to Azure Storage as blob:\n\t" + chunk[0])
                 
@@ -30,11 +35,12 @@ def main(myblob: InputStream):
                 
                 section_file_name = chunk[0].split(' -- ')[1]
                 section_title = section_file_name.replace('.txt', '') 
-            
-                blob_client.upload_blob(chunk[1], overwrite = True)
-                blob_client.set_blob_metadata({'webpage_url': str(blob_url),
-                                            'doc_title': str(blob_title),
-                                            'section': str(section_title)})
+                
+                output_dict = {'chunk_id': chunk_num , 'content': chunk[1],'doc_title': blob_title ,'chunk_title': section_title, 'source_url': blob_url}
+                output_json = json.dumps(output_dict)
+                blob_client.upload_blob(output_json, overwrite = True)
+                chunk_num += 1
+                
             else:
                 logging.info("\n"+ str(chunk[0]) + ' is already up-to-date.')
     except Exception as error:
