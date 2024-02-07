@@ -34,7 +34,7 @@ def main(myblob: InputStream):
                 section_file_name = chunk[0].split(' -- ')[1]
                 section_title = section_file_name.replace('.txt', '') 
                 
-                identifier = f"(Title: {blob_title} | Source: {blob_url} | Section: {section_title})"
+                identifier = f"(Title: {blob_title} | Source: {blob_url} | Section: {section_title})==="
                 
                 chunk_content = identifier + chunk[1]
                 embedded_content = embed_chunk(chunk_content)
