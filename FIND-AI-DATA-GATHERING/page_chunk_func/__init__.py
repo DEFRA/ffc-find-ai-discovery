@@ -30,9 +30,7 @@ def main(myblob: InputStream):
                 blob_title = blob_name.replace(".txt'", "")
                 blob_title = blob_title.replace((INPUT_CONTAINER_NAME + "/"), "")
                 
-                
-                blob_title = blob_title.encode('utf-8')
-                
+                                
                 section_file_name = chunk[0].split(' -- ')[1]
                 section_title = section_file_name.replace('.txt', '') 
                 
