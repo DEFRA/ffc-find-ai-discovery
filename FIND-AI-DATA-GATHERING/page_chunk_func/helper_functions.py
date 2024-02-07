@@ -1,4 +1,5 @@
 import re
+import openai
 from azure.storage.blob import BlobServiceClient, BlobClient
 from .app_settings import *
 from datetime import datetime
@@ -108,3 +109,13 @@ def split_content_by_headings(doc_title: str, markdown_content: str) -> list[tup
     combined_sections.append(doc_chunk_tup)  # Add the combined section to the list
 
   return combined_sections, url
+
+def embed_chunk(text: str):
+    
+    client = openai.AzureOpenAI(
+        azure_endpoint=open_ai_endpoint,
+        api_key=open_ai_key,
+        api_version="2023-12-01-preview",
+    )
+    embedding = client.embeddings.create(input=[text], model=embedding_model)
+    return embedding.data[0].embedding

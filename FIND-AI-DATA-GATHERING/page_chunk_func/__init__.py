@@ -34,7 +34,12 @@ def main(myblob: InputStream):
                 section_file_name = chunk[0].split(' -- ')[1]
                 section_title = section_file_name.replace('.txt', '') 
                 
-                output_dict = {'chunk_id': chunk_num , 'content': chunk[1],'doc_title': blob_title ,'chunk_title': section_title, 'source_url': blob_url}
+                identifier = f"(Title: {blob_title} | Source: {blob_url} | Section: {section_title})"
+                
+                chunk_content = identifier + chunk[1]
+                embedded_content = embed_chunk(chunk_content)
+                
+                output_dict = {'chunk_id': chunk_num , 'content': chunk_content,'content_vector': embedded_content,'doc_title': blob_title ,'chunk_title': section_title, 'source_url': blob_url}
                 output_json = json.dumps(output_dict)
                 blob_client.upload_blob(output_json, overwrite = True)
                 chunk_num += 1
