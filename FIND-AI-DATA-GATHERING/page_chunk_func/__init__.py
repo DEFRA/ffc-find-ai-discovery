@@ -16,7 +16,7 @@ def main(myblob: InputStream):
     try:
         
         blob_chunked_tups, blob_url = split_content_by_headings(blob_name, blob_content)
-        chunk_num = 0
+        
         for chunk in blob_chunked_tups:
             if check_data_freshness(chunk[1], chunk[0]):
                 
@@ -26,7 +26,7 @@ def main(myblob: InputStream):
                                                                     blob = blob_out_name)
                 
                 logging.info("\nUploading Chunk to Azure Storage as blob:\n\t" + chunk[0])
-                
+
                 blob_title = blob_name.replace(".txt'", "")
                 blob_title = blob_title.replace((INPUT_CONTAINER_NAME + "/"), "")
                 
@@ -39,10 +39,9 @@ def main(myblob: InputStream):
                 chunk_content = identifier + chunk[1]
                 embedded_content = embed_chunk(chunk_content)
                 
-                output_dict = {'chunk_id': chunk_num , 'content': chunk_content,'content_vector': embedded_content,'doc_title': blob_title ,'chunk_title': section_title, 'source_url': blob_url}
+                output_dict = {'content': chunk_content,'content_vector': embedded_content,'doc_title': blob_title ,'chunk_title': section_title, 'source_url': blob_url}
                 output_json = json.dumps(output_dict)
                 blob_client.upload_blob(output_json, overwrite = True)
-                chunk_num += 1
                 
             else:
                 logging.info("\n"+ str(chunk[0]) + ' is already up-to-date.')
