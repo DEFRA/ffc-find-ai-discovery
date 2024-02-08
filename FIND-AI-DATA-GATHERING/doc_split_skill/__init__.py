@@ -30,13 +30,25 @@ def main(req: HttpRequest) -> HttpResponse:
     
     doc_chunks, doc_url = split_content_by_headings(str(filename), str(text))
     
+    blob_title = filename.replace(".txt'", "")
+    blob_title = blob_title.replace((INPUT_CONTAINER_NAME + "/"), "")
+    
+    
     current_datetime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     
     chunks_list = []
     
     for idx, chunk in enumerate(doc_chunks):
+        
+        section_file_name = chunk[0].split(' -- ')[1]
+        chunk_title = section_file_name.replace('.txt', '') 
+    
+        chunk_identifier = f"(Title: {blob_title} | Source: {doc_url} | Section: {chunk_title})==="
+    
+        output_content = chunk_identifier + chunk[1]
+        
         chunkJson = {
-            "content": chunk[1],
+            "content": output_content,
             "chunk_id": str(idx),
             "title": chunk[0],
             "filepath": filename,
