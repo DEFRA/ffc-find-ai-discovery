@@ -132,6 +132,7 @@ def chunk_tokens(document: str, token_limit: int = 2048):
     chunk_text = encoding.decode(chunk)
     last_punctuation = max(
       chunk_text.rfind("."),
+      chunk_text.rfind("##"),
       chunk_text.rfind("\n")
     )
     if last_punctuation != -1 and len(tokens) > token_limit:
