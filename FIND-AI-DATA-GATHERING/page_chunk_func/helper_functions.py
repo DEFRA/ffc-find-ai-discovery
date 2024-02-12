@@ -1,5 +1,6 @@
 import re
 import openai
+import tiktoken
 from azure.storage.blob import BlobServiceClient, BlobClient
 from .app_settings import *
 from datetime import datetime
@@ -103,12 +104,45 @@ def split_content_by_headings(doc_title: str, markdown_content: str) -> list[tup
     heading = heading.replace("#", "")
     output_content_chunk = sections[i + 1].strip() if i + 1 < len(
         sections) else ''  # Get the text from sections[i + 1] if it exists, otherwise use an empty string
-      
+    
     chunk_title = doc_title.replace(".txt", (" --" + str(heading) + ".txt"))
     doc_chunk_tup = (chunk_title, output_content_chunk)
     combined_sections.append(doc_chunk_tup)  # Add the combined section to the list
 
   return combined_sections, url
+
+def get_source_url (document: str):
+  # Define the regular expression pattern to match H1 and H2 headings
+  pattern = r'((?<!#)#{1,2}(?!#).*)'
+
+  # Split the Markdown text based on the headings
+  sections = re.split(pattern, document, maxsplit = 1)
+
+  url = sections[0].strip().replace('\n', '')
+  stripped_content = sections[1]
+  return url, stripped_content
+
+def chunk_tokens(document: str, token_limit: int = 2048):
+  encoding = tiktoken.encoding_for_model('gpt-3.5-turbo-16k-0613')
+  chunks = []
+  tokens = encoding.encode(document, disallowed_special={})
+  
+  while tokens:
+    chunk = tokens[:token_limit]
+    chunk_text = encoding.decode(chunk)
+    last_punctuation = max(
+      chunk_text.rfind("."),
+      chunk_text.rfind("\n")
+    )
+    if last_punctuation != -1 and len(tokens) > token_limit:
+      chunk_text = chunk_text[: last_punctuation + 1]
+    cleaned_text = chunk_text.replace("\n", " ").strip()
+    if cleaned_text and (not cleaned_text.isspace()):
+      chunks.append(cleaned_text)
+    tokens = tokens[len(encoding.encode(chunk_text, disallowed_special={})):]
+    
+  return chunks
+
 
 def embed_chunk(text: str):
     

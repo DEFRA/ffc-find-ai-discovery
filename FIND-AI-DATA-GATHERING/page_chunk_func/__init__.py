@@ -13,32 +13,49 @@ def main(myblob: InputStream):
     
     try:
         
-        blob_chunked_tups, blob_url = split_content_by_headings(blob_name, blob_content)
+        #blob_chunked_tups, blob_url = split_content_by_headings(blob_name, blob_content)
+        blob_url = get_source_url(blob_content)
         
-        for chunk in blob_chunked_tups:
-            if check_data_freshness(chunk[1], chunk[0]):
-
-                blob_client = blob_service_client.get_blob_client(container = OUTPUT_CONTAINER_NAME,
-                                                                    blob = chunk[0])
+        blob_chunks = chunk_tokens(blob_content)
+        
+        blob_raw_title = blob_name.replace(".txt", "")
+        blob_title = blob_raw_title.replace((INPUT_CONTAINER_NAME + "/"), "")
+        
+        for i, text in enumerate(blob_chunks):
+            identifier = f"(Title: {blob_title} | Source: {blob_url} | Chunk Number: {str(i)})==="
+            chunk_content = identifier + text
+            
+            chunk_title = f"{blob_raw_title}_{i}.txt"
+            
+            blob_client = blob_service_client.get_blob_client(container = OUTPUT_CONTAINER_NAME,
+                                                                    blob = chunk_title)
                 
-                logging.info("\nUploading Chunk to Azure Storage as blob:\n\t" + chunk[0])
-
-                blob_title = blob_name.replace(".txt", "")
-                blob_title = blob_title.replace((INPUT_CONTAINER_NAME + "/"), "")
-                
-                                
-                section_file_name = chunk[0].split(' -- ')[1]
-                section_title = section_file_name.replace('.txt', '') 
-                
-                identifier = f"(Title: {blob_title} | Source: {blob_url} | Section: {section_title})==="
-                
-                chunk_content = identifier + chunk[1]                
-                
-                
-                blob_client.upload_blob(chunk_content, overwrite = True)
-                
-            else:
-                logging.info("\n"+ str(chunk[0]) + ' is already up-to-date.')
+            logging.info("\nUploading Chunk to Azure Storage as blob:\n\t" + chunk_title)
+            
+            blob_client.upload_blob(chunk_content, overwrite=True)
+            
+        #for chunk in blob_chunked_tups:
+        #    if check_data_freshness(chunk[1], chunk[0]):
+#
+#                blob_client = blob_service_client.get_blob_client(container = OUTPUT_CONTAINER_NAME,
+#                                                                    blob = chunk[0])
+#                
+#                logging.info("\nUploading Chunk to Azure Storage as blob:\n\t" + chunk[0])
+#
+#                blob_title = blob_name.replace(".txt", "")
+#                blob_title = blob_title.replace((INPUT_CONTAINER_NAME + "/"), "")
+#                
+#                                
+#                section_file_name = chunk[0].split(' -- ')[1]
+#                section_title = section_file_name.replace('.txt', '') 
+#                
+#                identifier = f"(Title: {blob_title} | Source: {blob_url} | Section: {section_title})==="
+#                
+#                chunk_content = identifier + chunk[1]                
+#                
+#                
+#                blob_client.upload_blob(chunk_content, overwrite = True)
+#               
     except Exception as error:
         logging.warning(f"WARNING: FAILED TO CHUNK WEBPAGE: {blob_name}")
         logging.exception(error)
