@@ -14,9 +14,9 @@ def main(myblob: InputStream):
     try:
         
         #blob_chunked_tups, blob_url = split_content_by_headings(blob_name, blob_content)
-        blob_url = get_source_url(blob_content)
+        blob_url, stripped_content = get_source_url(blob_content)
         
-        blob_chunks = chunk_tokens(blob_content)
+        blob_chunks = chunk_tokens(stripped_content)
         
         blob_raw_title = blob_name.replace(".txt", "")
         blob_title = blob_raw_title.replace((INPUT_CONTAINER_NAME + "/"), "")
