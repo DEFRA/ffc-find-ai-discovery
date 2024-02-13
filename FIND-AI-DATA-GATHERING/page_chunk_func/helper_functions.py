@@ -117,7 +117,7 @@ def get_source_url (document: str):
   stripped_content = document.replace(url, '')
   return url, stripped_content
 
-def chunk_tokens(document: str, token_limit: int = 2048):
+def chunk_tokens(document: str, token_limit: int = 512):
   encoding = tiktoken.encoding_for_model('gpt-3.5-turbo-16k-0613')
   chunks = []
   tokens = encoding.encode(document, disallowed_special={})
