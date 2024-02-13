@@ -33,6 +33,7 @@ def main(myblob: InputStream):
             logging.info("\nUploading Chunk to Azure Storage as blob:\n\t" + chunk_title)
             
             blob_client.upload_blob(chunk_content, overwrite=True)
+            blob_client.set_blob_metadata({'source_url': blob_url, 'document_title': blob_raw_title})
             
         #for chunk in blob_chunked_tups:
         #    if check_data_freshness(chunk[1], chunk[0]):
