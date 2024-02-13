@@ -112,14 +112,9 @@ def split_content_by_headings(doc_title: str, markdown_content: str) -> list[tup
   return combined_sections, url
 
 def get_source_url (document: str):
-  # Define the regular expression pattern to match H1 and H2 headings
-  pattern = r'((?<!#)#{1,2}(?!#).*)'
-
-  # Split the Markdown text based on the headings
-  sections = re.split(pattern, document, maxsplit = 1)
-
-  url = sections[0].strip().replace('\n', '')
-  stripped_content = sections[1]
+  
+  url = document.split('\n', 1)[0].strip().replace('\n', '')
+  stripped_content = document.replace(url, '')
   return url, stripped_content
 
 def chunk_tokens(document: str, token_limit: int = 2048):
