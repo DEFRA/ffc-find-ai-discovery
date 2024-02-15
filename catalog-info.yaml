@@ -1,0 +1,28 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ffc-find-ai-discovery
+  description: FIND AI discovery service
+  annotations:
+    github.com/project-slug: defra/ffc-find-ai-discovery
+    sonarqube.org/project-key: ffc-find-ai-discovery
+    grafana/dashboard-selector: "folderTitle == 'Managed Prometheus'"
+    backstage.io/kubernetes-id: ffc-find-ai-discovery
+  links:
+    - url: https://github.com/DEFRA/ffc-find-ai-discovery
+      title: View repository
+      icon: github
+    - url: https://sonarcloud.io/summary/overall?id=ffc-find-ai-discovery
+      title: SonarCloud Analysis
+    - url: https://snyk.io/test/github/DEFRA/ffc-find-ai-discovery
+      title: Snyk Analysis
+  tags:
+    - python
+    - private
+    - back-end
+    - azure-ai
+spec:
+  type: backend
+  lifecycle: alpha
+  owner: "group:default/fcp-find"
+  system: "system:default/fcp-find-system"
