@@ -14,7 +14,7 @@ def main(myblob: InputStream):
     try:
         
         #blob_chunked_tups, blob_url = split_content_by_headings(blob_name, blob_content)
-        blob_url, stripped_content = get_source_url(blob_content)
+        blob_url, grant_scheme_name, stripped_content = get_source_metadata(blob_content)
         
         logging.info(stripped_content)
         
@@ -35,7 +35,7 @@ def main(myblob: InputStream):
             logging.info("\nUploading Chunk to Azure Storage as blob:\n\t" + chunk_title)
             
             blob_client.upload_blob(chunk_content, overwrite=True)
-            blob_client.set_blob_metadata({'source_url': blob_url, 'document_title': blob_title})
+            blob_client.set_blob_metadata({'source_url': blob_url, 'document_title': blob_title, 'grant_scheme_name': grant_scheme_name})
             
         #for chunk in blob_chunked_tups:
         #    if check_data_freshness(chunk[1], chunk[0]):

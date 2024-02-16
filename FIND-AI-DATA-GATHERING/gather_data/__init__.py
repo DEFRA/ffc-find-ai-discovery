@@ -22,10 +22,10 @@ def main(mytimer: TimerRequest) -> None:
     for link in all_links:
         try:
             
-            doc_title, webpage_content = create_documents_from_webpage(link)
+            doc_title, webpage_content = create_cs_documents_from_webpage(link)
             
             if check_data_freshness(webpage_content, doc_title):
-                webpage_data = str(link) + "\n" + webpage_content
+                webpage_data = str(link) + "\n" + "Countryside Stewardship (CS)" +"\n" + webpage_content
                 webpage_data = webpage_data.encode('utf-8')
                 webpage_file_name = str(doc_title) + ".txt"
                 
@@ -40,6 +40,8 @@ def main(mytimer: TimerRequest) -> None:
                 blob_client.set_blob_metadata({"webpage_url": str(link), "doc_title": str(doc_title)})
             else:
                 logging.info("\n"+ str(doc_title) + ' is already up-to-date.')
+        
+            create_sig_documents_from_webpage(sig_base_url)
         except Exception as error:
             logging.warning(f"WARNING: FAILED TO PROCESS WEBPAGE: {doc_title}")
             logging.exception(error)

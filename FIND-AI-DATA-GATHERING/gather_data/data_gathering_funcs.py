@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup as bs
 from datetime import datetime
 from pytz import timezone
 import re
+import logging
 from html2text import html2text
 from azure.storage.blob import BlobServiceClient, BlobClient
 from .app_settings import *
@@ -13,6 +14,7 @@ blob_service_client = BlobServiceClient.from_connection_string(CONTAINER_CONNECT
 
 base_url = 'https://www.gov.uk/countryside-stewardship-grants'
 cs_overview_url = 'https://www.gov.uk/guidance/countryside-stewardship-get-funding-to-protect-and-improve-the-land-you-manage'
+sig_base_url = 'https://www.gov.uk/government/publications/slurry-infrastructure-grant-round-2-applicant-guidance/item-specification-and-grant-contribution'
 site_visits_url = 'https://www.gov.uk/guidance/site-visits-countryside-stewardship-and-environmental-stewardship'
 gov_uk_prefix = 'https://www.gov.uk'
 
@@ -45,9 +47,9 @@ def scrape_webpage(url: str) -> bs:
   return soup
 
 
-def webpage_to_markdown(soup: bs) -> str:
+def webpage_to_markdown(soup: bs, div_class: str) -> str:
   # Find main content div from webpage
-  main_div = soup.find("div", {"class": "app-c-contents-list-with-body"})
+  main_div = soup.find("div", {"class": div_class})
   # Extract the HTML content from the text body
   html_content = str(main_div)
 
@@ -72,7 +74,60 @@ def strip_links_from_markdown(markdown_content: str) -> str:
   return markdown_content
 
 
-def create_documents_from_webpage(url: str) -> tuple[str, str]:
+def split_markdown_by_headings(markdown_content, url):
+  # Define the regular expression pattern to match H1 and H2 headings
+  pattern = r'((?<!#)#{3}(?!#).*)'
+
+  # Split the Markdown text based on the headings
+  sections = re.split(pattern, markdown_content)
+  combined_sections = []
+  for i in range(1, len(sections), 2):
+    heading = sections[i].strip()  # Get the heading from sections[i]
+    heading = heading.replace("#", "")
+    text = sections[i + 1].strip() if i + 1 < len(
+        sections) else ''  # Get the text from sections[i + 1] if it exists, otherwise use an empty string
+    text = str(url) + "\n" + text
+    combined_section = (heading, text)
+    combined_sections.append(combined_section)  # Add the combined section to the list
+
+  return combined_sections
+
+def get_sig_update_date (soup: bs):
+  update_string_class = soup.findAll('p', class_='publication-header__last-changed')[0]
+  if update_string:
+    update_string = update_string_class.text.strip().replace('Updated ','')
+    scraped_datetime = datetime.strptime(update_string, "%d %B %Y")
+    scraped_datetime = scraped_datetime.astimezone(timezone('UTC'))
+  else:
+    return None
+
+def create_sig_documents_from_webpage(url: str) -> tuple [str, str]:
+  soup = scrape_webpage(url)
+  sig_page_update_date = get_sig_update_date(soup)
+  markdown_content = webpage_to_markdown(soup, "main-content-container")
+  stripped_content = strip_links_from_markdown(markdown_content)
+  split_documents = split_markdown_by_headings(stripped_content, url)
+  for doc in split_documents:
+    title = doc[0]
+    doc_text = doc[1]
+    if check_data_freshness(doc_text, title, sig_page_update_date):
+      webpage_data = str(url) + "\n" + "Slurry Infrastructure Grant (SIG)" + "\n" + doc_text
+      webpage_data = webpage_data.encode('utf-8')
+      webpage_file_name = str(title) + ".txt"
+      
+      blob_client = blob_service_client.get_blob_client(container = CONTAINER_NAME_STRING,
+                                                                    blob = webpage_file_name)
+      
+      logging.info("\nUploading to Azure Storage as blob:\n\t" + webpage_file_name)
+      
+      blob_client.upload_blob(webpage_data, overwrite = True)
+      blob_client.set_blob_metadata({"webpage_url": str(url), "doc_title": str(title)})
+    else:
+      logging.info("\n"+ str(title) + ' is already up-to-date.')
+    
+    
+
+def create_cs_documents_from_webpage(url: str) -> tuple[str, str]:
   soup = scrape_webpage(url)
   # Extract the title from the article
   title = soup.find('h1',{"class": "gem-c-title__text govuk-heading-l"}).get_text().strip()
@@ -80,7 +135,7 @@ def create_documents_from_webpage(url: str) -> tuple[str, str]:
   title = title.replace("/", "or")
 
   # Convert the webpage HTML to markdown
-  markdown_content = webpage_to_markdown(soup)
+  markdown_content = webpage_to_markdown(soup, "app-c-contents-list-with-body")
   stripped_content = strip_links_from_markdown(markdown_content)
   
   heading_pattern = r'(#{1,2}[\r\n\s0-9\.a-z\'\-\’A-Z\(\)]*)'
@@ -133,31 +188,35 @@ def fetch_blob_data(title: str) -> tuple[dict, bool]:
     print ('Could not connect to Container')
   
 
-def check_data_freshness (scraped_data: str, title: str) -> bool:
+def check_data_freshness (scraped_data: str, title: str, last_updated_datetime: datetime = None) -> bool:
   
   # Existing blob storage datetime handling
   document_blob_data, new_entry_flag = fetch_blob_data(title)
   
+  if last_updated_datetime == None:
+    
+    # Newly Scraped Datetime handling
+    update_string = 'Last updated'
+    before_update_string, update_string, after_update_string = scraped_data.partition(update_string)
+    
+    
+    # 1st Case: If "Last updated" substring not found in webpage, and the new entry flag from fetching the blob is True, we can return True as we can consider this webpage needs to be "refreshed" a.k.a uploaded to blob
+    
+    # 2nd Case: If "Last updated" substring not found in webpage, we can return False as the webpage must have not been updated since first publishing.
+    #           Given this case will only be reached if the new_entry_flag is False, we can assume at this point that we do not need to update the webpage.
+    if not update_string and new_entry_flag:
+      return True
+    elif not update_string:
+      return False
   
-  # Newly Scraped Datetime handling
-  update_string = 'Last updated'
-  before_update_string, update_string, after_update_string = scraped_data.partition(update_string)
-  
-  
-  # 1st Case: If "Last updated" substring not found in webpage, and the new entry flag from fetching the blob is True, we can return True as we can consider this webpage needs to be "refreshed" a.k.a uploaded to blob
-  
-  # 2nd Case: If "Last updated" substring not found in webpage, we can return False as the webpage must have not been updated since first publishing.
-  #           Given this case will only be reached if the new_entry_flag is False, we can assume at this point that we do not need to update the webpage.
-  if not update_string and new_entry_flag:
-    return True
-  elif not update_string:
-    return False
-  
-  scraped_date_str = after_update_string.split()[:3] # first 3 words
-  scraped_date_str = " ".join(scraped_date_str)
-  
-  scraped_datetime = datetime.strptime(scraped_date_str, "%d %B %Y")
-  scraped_datetime = scraped_datetime.astimezone(timezone('UTC'))
+    scraped_date_str = after_update_string.split()[:3] # first 3 words
+    scraped_date_str = " ".join(scraped_date_str)
+    
+    scraped_datetime = datetime.strptime(scraped_date_str, "%d %B %Y")
+    document_last_updated = scraped_datetime.astimezone(timezone('UTC'))
+    
+  else:
+    document_last_updated = last_updated_datetime
   
 
   if new_entry_flag:
@@ -166,6 +225,6 @@ def check_data_freshness (scraped_data: str, title: str) -> bool:
     blob_last_modified_date = document_blob_data.get('last_modified')
     
     # Returns True if newly scraped webpage has been modified since the last blob refresh
-    return scraped_datetime > blob_last_modified_date
+    return document_last_updated > blob_last_modified_date
 
 

@@ -111,11 +111,16 @@ def split_content_by_headings(doc_title: str, markdown_content: str) -> list[tup
 
   return combined_sections, url
 
-def get_source_url (document: str):
-  
-  url = document.split('\n', 1)[0].strip().replace('\n', '')
+
+
+def get_source_metadata (document: str):
+  split_doc = document.split('\n', 2)
+  url = split_doc[0].strip().replace('\n', '')
+  grant_scheme_name = split_doc[1].strip().replace('\n', '')
   stripped_content = document.replace(url, '')
-  return url, stripped_content
+  return url, grant_scheme_name, stripped_content
+
+
 
 def chunk_tokens(document: str, token_limit: int = 512):
   encoding = tiktoken.encoding_for_model('gpt-3.5-turbo-16k-0613')
