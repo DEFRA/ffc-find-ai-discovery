@@ -101,7 +101,7 @@ def get_sig_update_date (soup: bs):
   else:
     return None
 
-def create_sig_documents_from_webpage(url: str) -> tuple [str, str]:
+def create_sig_documents_from_webpage(url: str):
   soup = scrape_webpage(url)
   sig_page_update_date = get_sig_update_date(soup)
   markdown_content = webpage_to_markdown(soup, "main-content-container")
