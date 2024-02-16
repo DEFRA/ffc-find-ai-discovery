@@ -41,10 +41,14 @@ def main(mytimer: TimerRequest) -> None:
             else:
                 logging.info("\n"+ str(doc_title) + ' is already up-to-date.')
         
-            create_sig_documents_from_webpage(sig_base_url)
         except Exception as error:
             logging.warning(f"WARNING: FAILED TO PROCESS WEBPAGE: {doc_title}")
             logging.exception(error)
+    
+    try:
+        create_sig_documents_from_webpage(sig_base_url)
+    except Exception as error:
+        logging.warning(f'WARNING: FAILED TO PROCESS WEBPAGE: SIG')
     
 
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
