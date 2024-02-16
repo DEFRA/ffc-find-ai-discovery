@@ -94,7 +94,7 @@ def split_markdown_by_headings(markdown_content, url):
 
 def get_sig_update_date (soup: bs):
   update_string_class = soup.findAll('p', class_='publication-header__last-changed')[0]
-  if update_string:
+  if update_string_class:
     update_string = update_string_class.text.strip().replace('Updated ','')
     scraped_datetime = datetime.strptime(update_string, "%d %B %Y")
     scraped_datetime = scraped_datetime.astimezone(timezone('UTC'))
