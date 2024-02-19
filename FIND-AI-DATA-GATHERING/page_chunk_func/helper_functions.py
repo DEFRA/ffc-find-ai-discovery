@@ -117,7 +117,8 @@ def get_source_metadata (document: str):
   split_doc = document.split('\n', 2)
   url = split_doc[0].strip().replace('\n', '')
   grant_scheme_name = split_doc[1].strip().replace('\n', '')
-  stripped_content = document.replace(url, '')
+  #stripped_content = document.replace(url, '')
+  stripped_content = str(split_doc[2])
   return url, grant_scheme_name, stripped_content
 
 
