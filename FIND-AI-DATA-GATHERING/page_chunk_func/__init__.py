@@ -24,7 +24,7 @@ def main(myblob: InputStream):
         blob_title = blob_raw_title.replace((INPUT_CONTAINER_NAME + "/"), "")
         
         for i, text in enumerate(blob_chunks):
-            identifier = f"(Title: {blob_title} | Source: {blob_url} | Chunk Number: {str(i)})==="
+            identifier = f"(Title: {blob_title} | Grant Scheme Name: {grant_scheme_name} | Source: {blob_url} | Chunk Number: {str(i)})==="
             chunk_content = identifier + text
             
             chunk_title = f"{blob_raw_title}_{i}.txt"

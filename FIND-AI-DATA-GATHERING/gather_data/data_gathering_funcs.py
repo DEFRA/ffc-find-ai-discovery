@@ -86,7 +86,6 @@ def split_markdown_by_headings(markdown_content, url):
     heading = heading.replace("#", "")
     text = sections[i + 1].strip() if i + 1 < len(
         sections) else ''  # Get the text from sections[i + 1] if it exists, otherwise use an empty string
-    text = str(url) + "\n" + text
     combined_section = (heading, text)
     combined_sections.append(combined_section)  # Add the combined section to the list
 
@@ -108,7 +107,7 @@ def create_sig_documents_from_webpage(url: str):
   stripped_content = strip_links_from_markdown(markdown_content)
   split_documents = split_markdown_by_headings(stripped_content, url)
   for doc in split_documents:
-    title = doc[0]
+    title = doc[0].strip()
     doc_text = doc[1]
     if check_data_freshness(doc_text, title, sig_page_update_date):
       webpage_data = str(url) + "\n" + "Slurry Infrastructure Grant (SIG)" + "\n" + doc_text
