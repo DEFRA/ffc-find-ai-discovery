@@ -1,8 +1,10 @@
 import os
 
-service_endpoint = os.getenv["AZURE_SEARCH_SERVICE_ENDPOINT"]
+service_endpoint = os.getenv["AZURE_AI_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.getenv["AZURE_SEARCH_INDEX_NAME"]
 key = os.getenv["AZURE_SEARCH_API_KEY"]
+
+semantic_config_name = os.getenv["semantic_config_name"]
 
 open_ai_endpoint = os.getenv("OpenAIEndpoint")
 open_ai_key = os.getenv("OpenAIKey")

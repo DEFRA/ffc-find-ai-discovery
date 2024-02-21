@@ -1,24 +1,27 @@
 import logging
-
+import json
 from azure.functions import HttpRequest, HttpResponse
-
+from helper_funcs import *
+from app_settings import *
 
 def main(req: HttpRequest) -> HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    name = req.params.get('name')
-    if not name:
+    input = req.params.get('input')
+    if not input:
         try:
             req_body = req.get_json()
         except ValueError:
             pass
         else:
-            name = req_body.get('name')
-
-    if name:
-        return HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-    else:
-        return HttpResponse(
-            "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-            status_code=200
-        )
+            input = req_body.get('input')
+            
+    logging.info(f'Processing user query: {input}')
+    
+    response = answer_query(input)
+    test_url = 'https://www.gov.uk/government/publications/slurry-infrastructure-grant-round-2-applicant-guidance/item-specification-and-grant-contribution'
+    response_dict = {'answer': response, 'source_urls': [test_url]}
+    
+    response_json = json.dumps(response_dict)
+    return HttpResponse(response_json,
+                        mimetype="application/json")
