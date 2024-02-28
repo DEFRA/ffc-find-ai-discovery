@@ -1,8 +1,8 @@
 import logging
 import json
 from azure.functions import HttpRequest, HttpResponse
-from helper_funcs import *
-from app_settings import *
+from .helper_funcs import *
+from .app_settings import *
 
 def main(req: HttpRequest) -> HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
