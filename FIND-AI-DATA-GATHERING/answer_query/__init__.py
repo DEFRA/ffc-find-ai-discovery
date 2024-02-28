@@ -22,6 +22,7 @@ def main(req: HttpRequest) -> HttpResponse:
     test_url = 'https://www.gov.uk/government/publications/slurry-infrastructure-grant-round-2-applicant-guidance/item-specification-and-grant-contribution'
     response_dict = {'answer': response, 'source_urls': [test_url]}
     
+    logging.info(response)
     response_json = json.dumps(response_dict)
     return HttpResponse(response_json,
                         mimetype="application/json")
