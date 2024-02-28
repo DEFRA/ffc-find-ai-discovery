@@ -81,7 +81,7 @@ def answer_query(
         {"role": "user", "content": message},
     ]
     response = openai_client.completions.create(
-        engine=gpt_model,
+        model=gpt_model,
         prompt=message,
         temperature=0.0,
         stream=False
