@@ -82,7 +82,7 @@ def answer_query(
     ]
     response = openai_client.completions.create(
         model=gpt_model,
-        messages=messages,
+        prompt=messages,
         temperature=0.0,
         stream=False
     )
