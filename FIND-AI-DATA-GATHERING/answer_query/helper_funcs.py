@@ -6,9 +6,11 @@ from azure.search.documents.models import VectorizedQuery
 from azure.core.credentials import AzureKeyCredential
 from .app_settings import *
 
+azure_ai_search_credential = AzureKeyCredential(key)
+
 search_client = SearchClient(endpoint=service_endpoint,
                       index_name=index_name,
-                      credential=key)
+                      credential=azure_ai_search_credential)
 
 openai_client = openai.AzureOpenAI(
         azure_endpoint=open_ai_endpoint,
