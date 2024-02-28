@@ -86,5 +86,5 @@ def answer_query(
         temperature=0.0,
         stream=False
     )
-    response_message = response.choices[0].message.content
+    response_message = response.choices[0]['message']['content']
     return response_message
