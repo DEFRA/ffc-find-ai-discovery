@@ -4,7 +4,7 @@ import tiktoken
 from azure.search.documents import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from azure.core.credentials import AzureKeyCredential
-from app_settings import *
+from .app_settings import *
 
 search_client = SearchClient(endpoint=service_endpoint,
                       index_name=index_name,
