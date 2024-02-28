@@ -9,5 +9,6 @@ pytz
 html2text
 azure-identity
 azure-storage-blob
+azure-search-documents
 openai
 tiktoken
