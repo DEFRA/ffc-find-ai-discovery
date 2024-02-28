@@ -33,11 +33,11 @@ def num_tokens(text: str, model: str = gpt_model) -> int:
 
 def single_vector_search(user_query: str):
     # [START single_vector_search]
-    vector_query = VectorizedQuery(vector=embed_query(user_query), k_nearest_neighbors=3, fields="contentVector")
+    vector_query = VectorizedQuery(vector=embed_query(user_query), k_nearest_neighbors=20, fields="vector")
 
     results = search_client.search(
         vector_queries=[vector_query],
-        select=["content"]
+        select=["chunk"]
     )
     
     return results
