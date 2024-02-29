@@ -80,9 +80,9 @@ def answer_query(
         {"role": "system", "content": "You answer questions about the DEFRA Countryside Stewardship grant program."},
         {"role": "user", "content": message},
     ]
-    response = openai_client.completions.create(
+    response = openai_client.chat.completions.create(
         model=gpt_model,
-        prompt=message,
+        messages=messages,
         temperature=0.0,
         stream=False
     )
