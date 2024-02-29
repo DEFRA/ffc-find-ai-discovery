@@ -69,7 +69,7 @@ def query_message(
 
 def answer_query(
     query: str,
-    token_budget: int = 2048 - 500,
+    token_budget: int = 16384 - 1024,
     print_message: bool = False,
 ) -> str:
     """Answers a query using GPT and a dataframe of relevant texts and embeddings."""
@@ -87,5 +87,5 @@ def answer_query(
         stream=False
     )
     
-    response_message = response.choices[0]
+    response_message = response.choices[0]['message']['content']
     return response_message
