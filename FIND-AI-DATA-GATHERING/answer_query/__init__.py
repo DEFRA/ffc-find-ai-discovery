@@ -7,14 +7,10 @@ from .app_settings import *
 def main(req: HttpRequest) -> HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    input = req.params.get('input')
-    if not input:
-        try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            input = req_body.get('input')
+    try:
+        input = req.get_json().get('input')
+    except ValueError:
+        return HttpResponse(body='No user input detected.', status_code=400)
             
     logging.info(f'Processing user query: {input}')
     
