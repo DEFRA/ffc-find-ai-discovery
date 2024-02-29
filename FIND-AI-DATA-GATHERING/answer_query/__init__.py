@@ -10,7 +10,13 @@ def main(req: HttpRequest) -> HttpResponse:
     try:
         input = req.get_json().get('input')
     except ValueError:
-        return HttpResponse(body='No user input detected.', status_code=400)
+        error_response_json = json.dumps(
+            {
+            'message': 'No user input detected.'
+            })
+        return HttpResponse(error_response_json,
+                            status_code = 400,
+                            mimetype = "application/json")
             
     logging.info(f'Processing user query: {input}')
     
@@ -21,4 +27,5 @@ def main(req: HttpRequest) -> HttpResponse:
     logging.info(response)
     response_json = json.dumps(response_dict)
     return HttpResponse(response_json,
-                        mimetype="application/json")
+                        status_code = 200,
+                        mimetype = "application/json")
