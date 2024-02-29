@@ -87,5 +87,4 @@ def answer_query(
         stream=False
     )
     
-    response_message = response.choices[0]['message']['content']
-    return response_message
+    return response.choices[0]['message']['content']
