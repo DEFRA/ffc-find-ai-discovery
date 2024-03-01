@@ -30,7 +30,7 @@ def main(req: HttpRequest) -> HttpResponse:
         response_file = json.loads(response)
         response_json = json.dumps(response_file)
     except:
-        response_dict = {'answer': response}
+        response_dict = {'answer': response, 'failedJSONValidation': True}
         response_json = json.dumps(response_dict)
         
     return HttpResponse(response_json,
