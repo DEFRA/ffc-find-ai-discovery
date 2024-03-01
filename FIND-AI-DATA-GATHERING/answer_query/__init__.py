@@ -25,7 +25,8 @@ def main(req: HttpRequest) -> HttpResponse:
     #response_dict = {'answer': response, 'source_urls': [test_url]}
     
     logging.info(response)
-    response_json = json.dumps(response)
+    response_file = json.loads(response)
+    response_json = json.dumps(response_file)
     return HttpResponse(response_json,
                         status_code = 200,
                         mimetype = "application/json")
