@@ -21,11 +21,11 @@ def main(req: HttpRequest) -> HttpResponse:
     logging.info(f'Processing user query: {input}')
     
     response = answer_query(input)
-    test_url = 'https://www.gov.uk/government/publications/slurry-infrastructure-grant-round-2-applicant-guidance/item-specification-and-grant-contribution'
-    response_dict = {'answer': response, 'source_urls': [test_url]}
+    #test_url = 'https://www.gov.uk/government/publications/slurry-infrastructure-grant-round-2-applicant-guidance/item-specification-and-grant-contribution'
+    #response_dict = {'answer': response, 'source_urls': [test_url]}
     
     logging.info(response)
-    response_json = json.dumps(response_dict)
+    response_json = json.dumps(response)
     return HttpResponse(response_json,
                         status_code = 200,
                         mimetype = "application/json")
