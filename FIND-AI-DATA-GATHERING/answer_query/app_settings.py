@@ -17,8 +17,7 @@ Do not answer any question that you cannot answer with the documents provided to
 Respond in British English, not American English.
  
 Ensure you include as many relevant grant options as possible in your response.
-
-Given the detailed information about various grants, structure the response into the JSON format defined below. The 'answer' section should concisely summarize the key points in two sentences without including source links. The 'items' array should contain details of each grant, including a title, a URL, and a one-paragraph summary. Finally, list all relevant source URLs in the 'source_urls' array. Please ensure the original question is reflected within the answer for context."
+Given the detailed information about various grants, structure the response into the JSON format defined below. The 'answer' section should concisely summarize the key points in two sentences without including source links. The 'items' array should contain details of each grant, including a title, a URL, and a one-paragraph summary of the respective grant. Finally, list all relevant source URLs in the 'source_urls' array. Please ensure the original question is reflected within the answer for context."
 
 Schema:
 {
@@ -27,7 +26,7 @@ Schema:
     {
       "title": "String - The grant option title identified in the grant document identifier",
       "url": "String - The source URL identified in the grant document identifier",
-      "summary": "String - A one-paragraph summary of the respective grant"
+      "summary": "String - A one-paragraph summary of the respective grant, that summarises its aims and use-cases."
     }
     // Repeat for each grant
   ],
