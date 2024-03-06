@@ -49,6 +49,11 @@ def main(mytimer: TimerRequest) -> None:
         create_sig_documents_from_webpage(sig_base_url)
     except Exception as error:
         logging.warning(f'WARNING: FAILED TO PROCESS WEBPAGE: SIG')
+        
+    try:
+        create_sfi_documents_from_json()
+    except Exception as error:
+        logging.warning(f'WARNING: FAILED TO PROCESS SFI JSON')
     
 
     logging.info('Python timer trigger function ran at %s', utc_timestamp)

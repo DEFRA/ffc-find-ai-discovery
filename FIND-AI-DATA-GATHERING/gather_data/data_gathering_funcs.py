@@ -4,6 +4,7 @@ from datetime import datetime
 from pytz import timezone
 import re
 import logging
+import json
 from html2text import html2text
 from azure.storage.blob import BlobServiceClient, BlobClient
 from .app_settings import *
@@ -227,3 +228,41 @@ def check_data_freshness (scraped_data: str, title: str, last_updated_datetime: 
     return document_last_updated > blob_last_modified_date
 
 
+def load_sfi_data_from_json():
+  try:
+    blob_client = blob_service_client.get_blob_client(container=SFI_CONTAINER_NAME_STRING, blob=SFI_DOCUMENT_NAME_STRING)
+  except:
+    logging.error("Could not find JSON file")
+    return None
+  
+  downloader = blob_client.download_blob(max_concurrency=1, encoding='utf-8')
+  blob_text = downloader.readall()
+  
+  sfi_json = json.load(blob_text)
+  document_tuples = []
+  
+  for item in sfi_json:
+    sfi_doc_title = f"{item['code']}: {item['name']}"
+    sfi_doc_url = item['url']
+    sfi_doc_content = f"##Summary\n{item['overview']}\n##How much will be paid\n{item['amountLabel']}\n##Where to use this option\n{item['landTypeLabel']}"
+    
+    document_tuples.append((sfi_doc_title, sfi_doc_url, sfi_doc_content))
+  
+  return document_tuples
+
+def create_sfi_documents_from_json():
+  sfi_document_data = load_sfi_data_from_json()
+  
+  for doc in sfi_document_data:
+    title = doc[0].strip()
+    webpage_data = str(doc[1]) + "\n" + "Sustainable Farming Incentive (SFI)" + "\n" + doc[2]
+    webpage_data = webpage_data.encode('utf-8')
+    webpage_file_name = str(title) + ".txt"
+    
+    blob_client = blob_service_client.get_blob_client(container = CONTAINER_NAME_STRING,
+                                                                  blob = webpage_file_name)
+    
+    logging.info("\nUploading to Azure Storage as blob:\n\t" + webpage_file_name)
+    
+    blob_client.upload_blob(webpage_data, overwrite = True)
+    blob_client.set_blob_metadata({"webpage_url": str(doc[1]), "doc_title": str(title)})
