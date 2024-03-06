@@ -54,6 +54,7 @@ def main(mytimer: TimerRequest) -> None:
         create_sfi_documents_from_json()
     except Exception as error:
         logging.warning(f'WARNING: FAILED TO PROCESS SFI JSON')
+        logging.error(error)
     
 
     logging.info('Python timer trigger function ran at %s', utc_timestamp)
