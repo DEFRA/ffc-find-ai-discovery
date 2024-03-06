@@ -56,5 +56,11 @@ def main(mytimer: TimerRequest) -> None:
         logging.warning(f'WARNING: FAILED TO PROCESS SFI JSON')
         logging.error(error)
     
+    try:
+        create_fetf_docs_from_url()
+    except Exception as error:
+        logging.warning(f'WARNING: FAILED TO PROCESS WEBPAGE: FETF')
+        logging.error(error)
+    
 
     logging.info('Python timer trigger function ran at %s', utc_timestamp)

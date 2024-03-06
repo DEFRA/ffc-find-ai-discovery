@@ -16,6 +16,7 @@ blob_service_client = BlobServiceClient.from_connection_string(CONTAINER_CONNECT
 base_url = 'https://www.gov.uk/countryside-stewardship-grants'
 cs_overview_url = 'https://www.gov.uk/guidance/countryside-stewardship-get-funding-to-protect-and-improve-the-land-you-manage'
 sig_base_url = 'https://www.gov.uk/government/publications/slurry-infrastructure-grant-round-2-applicant-guidance/item-specification-and-grant-contribution'
+fetf_url = 'https://www.gov.uk/government/publications/farming-equipment-and-technology-fund-fetf-2023/annex-3-fetf-2023-productivity-and-slurry-eligible-items'
 site_visits_url = 'https://www.gov.uk/guidance/site-visits-countryside-stewardship-and-environmental-stewardship'
 gov_uk_prefix = 'https://www.gov.uk'
 
@@ -266,3 +267,48 @@ def create_sfi_documents_from_json():
     
     blob_client.upload_blob(webpage_data, overwrite = True)
     blob_client.set_blob_metadata({"webpage_url": str(doc[1]), "doc_title": str(title)})
+    
+def process_fetf_docs (fetf_tuple):
+    doc_code = str(fetf_tuple[0]).replace('---', '')
+    doc_title = f"{doc_code.strip()}: {str(fetf_tuple[1]).strip()}"
+    if fetf_tuple[6] == 'Horticulture':
+        grant_amount_string = 'Grant Amount based on a quantity of 1'
+    else:
+        grant_amount_string = 'Grant Amount'
+    doc_content = f"##Item Category\n{str(fetf_tuple[6]).strip()}\n##Item Specification \n{str(fetf_tuple[2])}\n##How much will be paid \nExpected average total costs of Item: £{str(fetf_tuple[3]).strip()}\n{grant_amount_string}: £{str(fetf_tuple[4]).strip()}\n##Item Score \nThe item score for this option is {str(fetf_tuple[5].strip())}. Each item has a score assigned to it based on our assessment of how well it meets the objectives of the scheme. If the scheme is oversubscribed, we will allocate funding to those items with the highest score first."
+    
+    return doc_title, doc_content
+
+
+def create_fetf_docs_from_url():
+    fetf_text = strip_links_from_markdown(webpage_to_markdown(scrape_webpage(fetf_url))) + "  "
+
+    split_text = fetf_text.split('##',)[2:]
+    pattern = r"([\w\s\.\,\-\(\)\/\*]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/\%\@\:\&\'\’]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/]+)[\s]{2}"
+
+    all_matches = []
+    for table in split_text:
+        category = table.split('\n\n')[0].strip()
+        matches = re.findall(pattern, table)
+        seeded_matches = []
+        for match in matches:
+            seeded_match = match + (category,)
+            seeded_matches.append(seeded_match)
+        all_matches.append(seeded_matches)
+
+    docs = [j for i in all_matches for j in i]
+
+    for doc in docs:
+        title, doc_content = process_fetf_docs(doc)
+         
+        webpage_data = str(fetf_url) + "\n" + "Farming Equipment and Technology Fund 2023 (FETF)" + "\n" + doc_content
+        webpage_data = webpage_data.encode('utf-8')
+        webpage_file_name = str(title) + ".txt"
+        
+        blob_client = blob_service_client.get_blob_client(container = CONTAINER_NAME_STRING,
+                                                                      blob = webpage_file_name)
+        
+        logging.info("\nUploading to Azure Storage as blob:\n\t" + webpage_file_name)
+        
+        blob_client.upload_blob(webpage_data, overwrite = True)
+        blob_client.set_blob_metadata({"webpage_url": str(fetf_url), "doc_title": str(title)})
