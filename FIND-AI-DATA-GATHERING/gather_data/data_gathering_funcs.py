@@ -238,7 +238,7 @@ def load_sfi_data_from_json():
   downloader = blob_client.download_blob(max_concurrency=1, encoding='utf-8')
   blob_text = downloader.readall()
   
-  sfi_json = json.load(blob_text)
+  sfi_json = json.loads(blob_text)
   document_tuples = []
   
   for item in sfi_json:
