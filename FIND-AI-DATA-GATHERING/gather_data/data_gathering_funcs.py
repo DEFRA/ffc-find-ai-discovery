@@ -52,6 +52,7 @@ def scrape_webpage(url: str) -> bs:
 def webpage_to_markdown(soup: bs, div_class: str) -> str:
   # Find main content div from webpage
   main_div = soup.find("div", {"class": div_class})
+
   # Extract the HTML content from the text body
   html_content = str(main_div)
 
@@ -281,7 +282,7 @@ def process_fetf_docs (fetf_tuple):
 
 
 def create_fetf_docs_from_url():
-    fetf_text = strip_links_from_markdown(webpage_to_markdown(scrape_webpage(fetf_url))) + "  "
+    fetf_text = strip_links_from_markdown(webpage_to_markdown(scrape_webpage(fetf_url), div_class= "main-content-container")) + "  "
 
     split_text = fetf_text.split('##',)[2:]
     pattern = r"([\w\s\.\,\-\(\)\/\*]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/\%\@\:\&\'\’]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/]+)[\s]{2}"
