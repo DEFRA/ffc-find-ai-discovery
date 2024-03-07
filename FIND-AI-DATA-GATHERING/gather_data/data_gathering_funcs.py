@@ -271,7 +271,7 @@ def create_sfi_documents_from_json():
     
 def process_fetf_docs (fetf_tuple):
     doc_code = str(fetf_tuple[0]).replace('---', '')
-    doc_title = f"{doc_code.strip()}: {str(fetf_tuple[1]).strip()}"
+    doc_title = f"{doc_code.strip()}: {str(fetf_tuple[1]).strip()}".replace(' /', '')
     if fetf_tuple[6] == 'Horticulture':
         grant_amount_string = 'Grant Amount based on a quantity of 1'
     else:
@@ -302,9 +302,9 @@ def create_fetf_docs_from_url():
     for doc in docs:
         title, doc_content = process_fetf_docs(doc)
          
-        webpage_data = str(fetf_url) + "\n" + "Farming Equipment and Technology Fund 2023 (FETF)" + "\n" + doc_content
+        webpage_data = str(fetf_url) + "\n" + "Farming Equipment and Technology Fund (FETF)" + "\n" + doc_content
         webpage_data = webpage_data.encode('utf-8')
-        webpage_file_name = str(title) + ".txt"
+        webpage_file_name = str(title).replace('/', '-') + ".txt"
         
         blob_client = blob_service_client.get_blob_client(container = CONTAINER_NAME_STRING,
                                                                       blob = webpage_file_name)
