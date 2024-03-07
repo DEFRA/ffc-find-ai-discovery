@@ -272,7 +272,7 @@ def create_sfi_documents_from_json():
     
 def process_fetf_docs (fetf_tuple):
     doc_code = str(fetf_tuple[0]).replace('---', '')
-    doc_title = f"{doc_code.strip()}: {str(fetf_tuple[1]).strip()}".replace(' /', '')
+    doc_title = f"{doc_code.strip()}: {str(fetf_tuple[1]).strip()}".replace(' /', '').replace('*', '')
     if fetf_tuple[6] == 'Horticulture':
         grant_amount_string = 'Grant Amount based on a quantity of 1'
     else:
