@@ -287,7 +287,7 @@ def create_fetf_docs_from_url():
     fetf_text = strip_links_from_markdown(webpage_to_markdown(scrape_webpage(url), div_class= "main-content-container")) + "  "
 
     split_text = fetf_text.split('##',)[2:]
-    pattern = r"([\w\s\.\,\-\(\)\/\*]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/\%\@\:\&\'\’]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/]+)[\s]{2}"
+    pattern = r"([\w\s\.\,\-\(\)\/\*]+) \| ([\w\s\.\,\-\(\)\/\:]+) \| ([\w\s\.\,\-\(\)\/\%\@\:\&\'\‘\’\\\n\r\–]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/]+) \| ([\w\s\.\,\-\(\)\/]+)[\s]{2}"
 
     all_matches = []
     for table in split_text:
