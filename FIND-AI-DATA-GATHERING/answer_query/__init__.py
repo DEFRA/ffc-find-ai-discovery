@@ -17,7 +17,17 @@ def main(req: HttpRequest) -> HttpResponse:
         return HttpResponse(error_response_json,
                             status_code = 400,
                             mimetype = "application/json")
-            
+    
+    try:
+        selected_schemes = req.get_json().get('selected_schemes')
+    except:
+        selected_schemes = []
+        
+    try:
+        message_history = req.get_json().get('history')
+    except:
+        message_history = []
+    
     logging.info(f'Processing user query: {input}')
     
     response = answer_query(input)
