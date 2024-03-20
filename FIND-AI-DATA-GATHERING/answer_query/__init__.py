@@ -18,6 +18,8 @@ def main(req: HttpRequest) -> HttpResponse:
                             status_code = 400,
                             mimetype = "application/json")
     
+    logging.info(req.get_json())
+    
     try:
         selected_schemes = req.get_json().get('selected_schemes')
     except:
