@@ -5,6 +5,7 @@ from azure.search.documents import SearchClient
 from azure.search.documents.models import VectorizedQuery
 from azure.core.credentials import AzureKeyCredential
 from .app_settings import *
+import logging
 
 azure_ai_search_credential = AzureKeyCredential(key)
 
@@ -41,6 +42,7 @@ def create_filter_expression(selected_schemes: list):
     
     filter_field = 'grant_scheme_name'
     
+    logging.info(selected_schemes)
     if selected_schemes or (len(selected_schemes = 4)):
         schemes_for_expression = []
         for item in selected_schemes:
