@@ -18,8 +18,6 @@ def main(req: HttpRequest) -> HttpResponse:
                             status_code = 400,
                             mimetype = "application/json")
     
-    logging.info(req.get_json())
-    
     try:
         selected_schemes = req.get_json().get('selected_schemes')
     except:
@@ -32,7 +30,7 @@ def main(req: HttpRequest) -> HttpResponse:
     
     logging.info(f'Processing user query: {input}')
     
-    response = answer_query(input)
+    response = answer_query(input, selected_schemes=selected_schemes)
     #test_url = 'https://www.gov.uk/government/publications/slurry-infrastructure-grant-round-2-applicant-guidance/item-specification-and-grant-contribution'
     #response_dict = {'answer': response, 'source_urls': [test_url]}
     
