@@ -43,7 +43,7 @@ def create_filter_expression(selected_schemes: list):
     filter_field = 'grant_scheme_name'
     
     logging.info(selected_schemes)
-    if selected_schemes or (len(selected_schemes = 4)):
+    if selected_schemes or (len(selected_schemes) == 4):
         schemes_for_expression = []
         for item in selected_schemes:
             if item == "CS":
