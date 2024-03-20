@@ -68,11 +68,19 @@ def single_vector_search(user_query: str, selected_schemes: list):
     # [START single_vector_search]
     vector_query = VectorizedQuery(vector=embed_query(user_query), k_nearest_neighbors=20, fields="vector")
     filter_string = create_filter_expression(selected_schemes)
-    results = search_client.search(
-        vector_queries=[vector_query],
-        filter=filter_string,
-        select=["chunk"]
-    )
+    logging.info(filter_string)
+    
+    if filter_string:
+        results = search_client.search(
+            vector_queries=[vector_query],
+            filter=filter_string,
+            select=["chunk"]
+        )
+    else:
+        results = search_client.search(
+            vector_queries=[vector_query],
+            select=["chunk"]
+        )
     
     return results
 
