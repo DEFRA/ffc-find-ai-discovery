@@ -60,7 +60,7 @@ def create_filter_expression(selected_schemes: list):
             filter_sub_expr = f"{filter_field} eq '{item}'"
             filter_sub_expressions.append(filter_sub_expr)
         
-        return 'or'.join(filter_sub_expressions)
+        return 'or '.join(filter_sub_expressions)
     else:
         return ""
 
